@@ -9,57 +9,47 @@ pipeline {
     stages {
         stage('Terraform Init') {
             steps {
-                dir('terraform') {
-                    sh '''
-                        export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
-                        terraform init -input=false
-                    '''
-                }
+                sh '''
+                    export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
+                    terraform init -input=false
+                '''
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                dir('terraform') {
-                    sh '''
-                        export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
-                        terraform validate
-                    '''
-                }
+                sh '''
+                    export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
+                    terraform validate
+                '''
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                dir('terraform') {
-                    sh '''
-                        export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
-                        terraform plan -input=false -out=tfplan -var-file="terraform.tfvars"
-                    '''
-                }
+                sh '''
+                    export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
+                    terraform plan -input=false -out=tfplan -var-file="terraform.tfvars"
+                '''
             }
         }
 
         stage('Terraform Apply') {
             steps {
                 input message: 'Запустити Terraform Apply?'
-                dir('terraform') {
-                    sh '''
-                        export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
-                        terraform apply -input=false -auto-approve tfplan
-                    '''
-                }
+                sh '''
+                    export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
+                    terraform apply -input=false -auto-approve tfplan
+                '''
             }
         }
 
         stage('Show Outputs') {
             steps {
-                dir('terraform') {
-                    sh '''
-                        export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
-                        terraform output
-                    '''
-                }
+                sh '''
+                    export GOOGLE_APPLICATION_CREDENTIALS="$GOOGLE_CREDS"
+                    terraform output
+                '''
             }
         }
     }
